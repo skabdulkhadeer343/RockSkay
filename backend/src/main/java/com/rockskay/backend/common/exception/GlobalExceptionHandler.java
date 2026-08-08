@@ -1,16 +1,15 @@
 package com.rockskay.backend.common.exception;
 
 import com.rockskay.backend.common.dto.ErrorResponse;
-import com.rockskay.backend.common.exception.otp.InvalidOtpException;
-import com.rockskay.backend.common.exception.otp.OtpExpiredException;
+import com.rockskay.backend.otp.exception.*;
 import com.rockskay.backend.common.exception.resource.DuplicateResourceException;
 import com.rockskay.backend.common.exception.resource.ResourceAlreadyVerifiedException;
 import com.rockskay.backend.common.exception.resource.ResourceNotFoundException;
 import com.rockskay.backend.common.exception.resource.ResourceNotVerifiedException;
-import com.rockskay.backend.common.exception.auth.ForbiddenException;
-import com.rockskay.backend.common.exception.auth.InvalidTokenException;
-import com.rockskay.backend.common.exception.auth.TokenExpiredException;
-import com.rockskay.backend.common.exception.auth.UnauthorizedException;
+import com.rockskay.backend.auth.exceptions.ForbiddenException;
+import com.rockskay.backend.auth.exceptions.InvalidTokenException;
+import com.rockskay.backend.auth.exceptions.TokenExpiredException;
+import com.rockskay.backend.auth.exceptions.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -46,18 +45,6 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    @ExceptionHandler({
-            InvalidOtpException.class,
-            OtpExpiredException.class
-    })
-    public ResponseEntity<ErrorResponse> handleBadRequest(RuntimeException ex) {
-
-        return ResponseEntity.badRequest()
-                .body(ErrorResponse.of(
-                        HttpStatus.BAD_REQUEST.value(),
-                        ex.getMessage()
-                ));
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(
@@ -116,4 +103,39 @@ public class GlobalExceptionHandler {
                         "An unexpected error occurred."
                 ));
     }
+
+
+    @ExceptionHandler({
+            OtpAttemptsExceededException.class,
+            OtpCooldownException.class,
+            OtpRateLimitExceededException.class
+    })
+    public ResponseEntity<ErrorResponse> handleTooManyRequests(
+            RuntimeException ex
+    ) {
+
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(ErrorResponse.of(
+                        HttpStatus.TOO_MANY_REQUESTS.value(),
+                        ex.getMessage()
+                ));
+    }
+
+
+    @ExceptionHandler({
+            InvalidOtpException.class,
+            OtpExpiredException.class,
+            OtpNotFoundException.class
+    })
+    public ResponseEntity<ErrorResponse> handleOtpBadRequest(
+            RuntimeException ex
+    ) {
+
+        return ResponseEntity.badRequest()
+                .body(ErrorResponse.of(
+                        HttpStatus.BAD_REQUEST.value(),
+                        ex.getMessage()
+                ));
+    }
+
 }

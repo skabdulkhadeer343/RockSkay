@@ -1,5 +1,7 @@
 package com.rockskay.backend.auth.entity;
 
+import com.rockskay.backend.common.entity.AuditableEntity;
+import com.rockskay.backend.common.entity.AuditableUuidEntity;
 import com.rockskay.backend.common.entity.BaseUuidEntity;
 import com.rockskay.backend.user.entity.User;
 import jakarta.persistence.*;
@@ -24,7 +26,7 @@ import java.time.Instant;
                 @Index(name = "idx_refresh_token_token", columnList = "token")
         }
 )
-public class RefreshToken extends BaseUuidEntity {
+public class RefreshToken extends AuditableUuidEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -40,6 +42,4 @@ public class RefreshToken extends BaseUuidEntity {
     @Column(name = "is_revoked", nullable = false)
     private boolean revoked = false;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
 }

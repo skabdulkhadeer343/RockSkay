@@ -2,11 +2,11 @@ package com.rockskay.backend.auth.controller;
 
 import com.rockskay.backend.auth.dto.*;
 import com.rockskay.backend.auth.service.AuthService;
-import com.rockskay.backend.common.constant.ApiEndpoints;
+import com.rockskay.backend.common.constants.ApiEndpoints;
 import com.rockskay.backend.common.dto.ApiResponse;
+import com.rockskay.backend.common.dto.EmptyResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,5 +49,35 @@ public class AuthController {
                 ));
     }
 
+    @PostMapping("/email-verification/send-otp")
+    public ResponseEntity<EmptyResponse> sendVerificationOtp(
+            @Valid @RequestBody EmailVerificationRequest request
+    ) {
+        authService.sendEmailVerificationOtp(request.email());
+
+        return ResponseEntity.ok(
+                EmptyResponse.of("OTP sent successfully."));
+    }
+
+    @PostMapping("/email-verification/verify-otp")
+    public ResponseEntity<EmptyResponse> verifyEmail(
+            @Valid @RequestBody EmailVerificationOtpVerifyRequest request
+    )
+    {
+        authService.verifyEmail(request.email(), request.otp());
+
+        return ResponseEntity.ok(
+                EmptyResponse.of("Verified Successfully."));
+    }
+
+
+//    POST /api/v1/auth/password-reset/send
+//    POST /api/v1/auth/password-reset/verify
+//
+//    POST /api/v1/resume/download/send
+//    POST /api/v1/resume/download/verify
+//
+//    POST /api/v1/account/delete/send
+//    POST /api/v1/account/delete/verify
 
 }

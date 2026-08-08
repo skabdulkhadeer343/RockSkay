@@ -2,11 +2,11 @@ package com.rockskay.backend.auth.service;
 
 import com.rockskay.backend.auth.entity.RefreshToken;
 import com.rockskay.backend.auth.repository.RefreshTokenRepository;
-import com.rockskay.backend.common.exception.auth.InvalidTokenException;
-import com.rockskay.backend.common.exception.auth.TokenExpiredException;
+import com.rockskay.backend.auth.exceptions.InvalidTokenException;
+import com.rockskay.backend.auth.exceptions.TokenExpiredException;
 import com.rockskay.backend.common.util.HashUtil;
 import com.rockskay.backend.common.util.RandomUtil;
-import com.rockskay.backend.security.config.JwtProperties;
+import com.rockskay.backend.infrastructure.config.AppProperties;
 import com.rockskay.backend.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +20,12 @@ import java.time.Instant;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final JwtProperties jwtProperties;
+    private final AppProperties appProperties;
 
     @Transactional
     public String createRefreshToken(User user) {
 
         String refreshTokenString = RandomUtil.generateSecureToken();
-
-
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(HashUtil.sha256(refreshTokenString))
@@ -78,7 +76,7 @@ public class RefreshTokenService {
 
     private Instant calculateExpiry() {
         return Instant.now().plus(
-                Duration.ofMinutes(jwtProperties.getRefreshTokenExpiresInMins())
+                Duration.ofMinutes(appProperties.getJwt().getRefreshTokenExpiresInMins())
         );
     }
 }

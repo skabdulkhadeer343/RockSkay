@@ -77,6 +77,13 @@ CREATE TABLE refresh_tokens (
                                 expires_at          TIMESTAMPTZ NOT NULL,
                                 is_revoked          BOOLEAN NOT NULL DEFAULT FALSE,
                                 created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                                created_by          UUID,
+
+                                updated_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                                updated_by          UUID,
+
+                                deleted_at          TIMESTAMPTZ,
+                                deleted_by          UUID,
 
                                 CONSTRAINT fk_refresh_tokens_user
                                     FOREIGN KEY (user_id)
