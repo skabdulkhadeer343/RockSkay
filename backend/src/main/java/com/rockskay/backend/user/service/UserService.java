@@ -32,10 +32,6 @@ public class UserService {
 
     public User createUser(RegisterRequest request) {
 
-        if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email is already registered!");
-        }
-
         User user = User.builder()
                 .firstName(request.firstName())
                 .lastName(request.lastName())

@@ -10,6 +10,7 @@ public record EmptyResponse (
 ){
 
     public static EmptyResponse of(String message) {
+
         return new EmptyResponse(true, message, Instant.now());
     }
 
